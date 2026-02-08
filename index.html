@@ -2,49 +2,11 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PanPOS OpenSource</title>
-    <link rel="stylesheet" href="estilos.css">
-    <link rel="manifest" href="manifest.json">
-    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
+    <title>Prueba de Conexión PanPOS</title>
 </head>
 <body>
-    
-    <div id="app">
-        <div class="main-container">
-            <section id="ticket-panel">
-                <div id="items-list"></div>
-                <div id="totals">
-                    <h2>Total: $<span id="total-amount">0</span></h2>
-                    <button class="btn-pay" onclick="procesarPago()">COBRAR (Print)</button>
-                </div>
-            </section>
-            <section id="products-grid"></section>
-            <nav id="categories-sidebar"></nav>
-        </div>
-    </div>
-
-    <div id="ticket-impresion" class="solo-impresion">
-        <center><h2>PANADERÍA POS</h2><p id="p-fecha"></p></center>
-        <hr><div id="p-items"></div><hr>
-        <h3>TOTAL: $<span id="p-total"></span></h3>
-    </div>
-
-    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
-        
+    <h1>Verificando conexión con Google Sheets...</h1>
+    <p>Abre la consola (F12) para ver los detalles.</p>
+    <script src="app.js"></script>
 </body>
-    
-    <div style="background: #2c3e50; color: white; padding: 20px; text-align: center; border-bottom: 5px solid #e74c3c;">
-    <h3>⚙️ PANEL DE CONFIGURACIÓN CRÍTICA</h3>
-    <p>Si no ves tus productos, usa el botón de abajo:</p>
-    <button onclick="let n = prompt('Pega aquí la URL de Google Sheets (_o7I/exec):'); if(n){localStorage.setItem('url_google_sheets', n); location.reload();}" 
-            style="background: #27ae60; color: white; padding: 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
-        🔗 PEGAR NUEVA URL DE GOOGLE
-    </button>
-    <button onclick="localStorage.clear(); location.reload();" 
-            style="background: #c0392b; color: white; padding: 15px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
-        🗑️ BORRAR TODO Y REINICIAR
-    </button>
-    </div>
-    
 </html>
