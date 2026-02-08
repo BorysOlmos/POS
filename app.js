@@ -10,7 +10,7 @@ async function verificarConfiguracion() {
     // Si la URL es la vieja o no existe, limpiar
     if (!API_URL || API_URL.includes("C0egYc")) {
         localStorage.removeItem("url_google_sheets");
-        let urlPropuesta = prompt("SISTEMA DE RECUPERACIÓN\n\nPor favor, pega la NUEVA URL (la que termina en _o7I/exec):");
+        let urlPropuesta = prompt("https://script.google.com/macros/s/AKfycbz6nN5IzQCxv0wjjdIhqCBPoVrMKD6lH0GflTtRk0VYx0DwOdTlYNu9pInYRHEr_o7I/exec");
         
         if (urlPropuesta && urlPropuesta.includes("script.google.com")) {
             localStorage.setItem("url_google_sheets", urlPropuesta);
