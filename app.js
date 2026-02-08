@@ -1,5 +1,5 @@
 // CONFIGURACIÓN BÁSICA
-const API_URL = "https://script.google.com/macros/s/AKfycbz6nN5IzQCxv0wjjdIhqCBPoVrMKD6lH0GflTtRk0VYx0DwOdTlYNu9pInYRHEr_o7I/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzXOaRPWuOVn5NzKIvbVGMp-1LDbsr2wBwUS3rCK-nhoAPm7YtMB1lAkZ6RQAvRosu5/exec";
 
 async function probarConexion() {
     console.log("Intentando conectar a:", API_URL);
