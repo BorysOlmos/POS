@@ -1,20 +1,18 @@
-const CACHE_NAME = 'panpos-v2';
-const ASSETS = [
-  './',
-  './index.html',
-  './app.js',
-  './estilos.css',
-  './manifest.json'
-];
-
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
+self.addEventListener('install', event => {
+  // Obliga al Service Worker nuevo a tomar el control de inmediato
+  self.skipWaiting();
 });
 
-self.addEventListener('fetch', e => {
-  // SI LA PETICIÓN ES PARA GOOGLE, NO USAR CACHE
-  if (e.request.url.includes('script.google.com')) {
-    return fetch(e.request);
-  }
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+self.addEventListener('activate', event => {
+  // Borra cualquier cache viejo
+  event.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(keys.map(key => caches.delete(key)));
+    })
+  );
+});
+
+self.addEventListener('fetch', event => {
+  // No guarda nada en cache por ahora, para que podamos arreglar la conexión
+  return fetch(event.request);
 });
