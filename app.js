@@ -1,8 +1,11 @@
-// CONFIGURACIÓN BÁSICA
-const API_URL = "https://script.google.com/macros/s/AKfycbzXOaRPWuOVn5NzKIvbVGMp-1LDbsr2wBwUS3rCK-nhoAPm7YtMB1lAkZ6RQAvRosu5/exec";
+// 1. Tu URL de Google (la que ya tenemos)
+const URL_ORIGINAL = "https://script.google.com/macros/s/AKfycbzXOaRPWuOVn5NzKIvbVGMp-1LDbsr2wBwUS3rCK-nhoAPm7YtMB1lAkZ6RQAvRosu5/exec";
+
+// 2. Usamos un Proxy para saltar el bloqueo de CORS
+const API_URL = "https://corsproxy.io/?" + encodeURIComponent(URL_ORIGINAL);
 
 async function probarConexion() {
-    console.log("Intentando conectar a:", API_URL);
+    console.log("Intentando conectar a través de Proxy...");
     
     try {
         const respuesta = await fetch(API_URL);
@@ -10,27 +13,19 @@ async function probarConexion() {
         
         console.log("¡CONEXIÓN EXITOSA!", datos);
         
-        if (datos.length > 0) {
-            document.body.innerHTML = `
-                <h1 style="color: green;">✅ ¡Conexión Exitosa!</h1>
-                <p>Se encontraron ${datos.length} productos en tu Excel.</p>
-                <pre>${JSON.stringify(datos[0], null, 2)}</pre>
-                <button onclick="location.reload()">Probar de nuevo</button>
-            `;
-        } else {
-            document.body.innerHTML = `<h1 style="color: orange;">⚠️ Conectado, pero el Excel está vacío.</h1>`;
-        }
-    } catch (error) {
-        console.error("Error detallado:", error);
         document.body.innerHTML = `
-            <h1 style="color: red;">❌ Error de Conexión</h1>
-            <p>El navegador bloqueó la respuesta o la URL es incorrecta.</p>
-            <p>Detalle: ${error.message}</p>
-            <br>
-            <small>Revisa que en Google Sheets hayas puesto: 'Cualquiera' en el acceso.</small>
+            <h1 style="color: green;">✅ ¡CONEXIÓN LOGRADA CON PROXY!</h1>
+            <p>Se encontraron ${datos.length} productos.</p>
+            <button onclick="location.reload()">Refrescar</button>
+        `;
+    } catch (error) {
+        console.error("Error:", error);
+        document.body.innerHTML = `
+            <h1 style="color: red;">❌ El Proxy no pudo entrar</h1>
+            <p>Google sigue pidiendo inicio de sesión.</p>
+            <p>Probemos lo siguiente: <a href="${URL_ORIGINAL}" target="_blank">Haz clic aquí para loguearte en Google</a> y luego refresca esta página.</p>
         `;
     }
 }
 
-// Ejecutar la prueba al cargar la página
 window.onload = probarConexion;
