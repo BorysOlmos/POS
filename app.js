@@ -5,12 +5,19 @@ let carrito = [];
 
 if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
 
+// 1. Intentamos obtener la URL guardada
+let API_URL = localStorage.getItem("url_google_sheets");
+
 async function verificarConfiguracion() {
-    if (!API_URL) {
-        let urlPropuesta = prompt("BIENVENIDO\n\nPor favor, pega la URL de Google Sheets (/exec):");
+    // Si no hay URL, o si la URL es la vieja (la que termina en DIpqyC0egYc), la borramos
+    if (!API_URL || API_URL.includes("DIpqyC0egYc")) {
+        localStorage.removeItem("url_google_sheets");
+        let urlPropuesta = prompt("⚠️ CONFIGURACIÓN NECESARIA\n\nPor favor, pega la NUEVA URL de Google Sheets (la que termina en /exec):");
+        
         if (urlPropuesta && urlPropuesta.includes("script.google.com")) {
             localStorage.setItem("url_google_sheets", urlPropuesta);
             API_URL = urlPropuesta;
+            alert("✅ Nueva URL guardada. Cargando...");
             location.reload();
         }
     }
