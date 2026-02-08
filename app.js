@@ -16,26 +16,40 @@ async function verificarConfiguracion() {
     }
 }
 
+async function sincronizar() {
+    try {
+        // Añadimos un modo 'cors' implícito al usar Google Apps Script
+        const res = await fetch(API_URL, { method: 'GET', redirect: 'follow' });
+        const data = await res.json();
+        
+        if (data && data.length > 0) {
+            await db.productos.clear();
+            await db.productos.bulkAdd(data);
+            console.log("Datos sincronizados con éxito");
+        }
+    } catch(e) { 
+        console.error("Error de sincronización:", e); 
+    }
+}
+
 window.onload = async () => {
     await verificarConfiguracion();
     if (API_URL) {
         if (navigator.onLine) await sincronizar();
+        
         const prods = await db.productos.toArray();
-        const cats = [...new Set(prods.map(p => p.Categoria))];
-        document.getElementById('categories-sidebar').innerHTML = cats.map(c => 
-            `<button class="btn-cat" onclick="mostrarProductos('${c}')">${c}</button>`).join('');
-        mostrarProductos(cats[0]);
+        if (prods.length > 0) {
+            const cats = [...new Set(prods.map(p => p.Categoria))];
+            document.getElementById('categories-sidebar').innerHTML = cats.map(c => 
+                `<button class="btn-cat" onclick="mostrarProductos('${c}')">${c}</button>`).join('');
+            
+            // Solo intentamos mostrar productos si existen categorías
+            if (cats.length > 0) mostrarProductos(cats[0]);
+        } else {
+            document.getElementById('products-grid').innerHTML = "<h3>No hay productos. Revisa tu Excel y la URL de Google.</h3>";
+        }
     }
 };
-
-async function sincronizar() {
-    try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        await db.productos.clear();
-        await db.productos.bulkAdd(data);
-    } catch(e) { console.log("Modo Offline activo"); }
-}
 
 async function mostrarProductos(cat) {
     const prods = await db.productos.where('Categoria').equals(cat).toArray();
