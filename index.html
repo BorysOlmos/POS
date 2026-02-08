@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PanPOS OpenSource</title>
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="main-container">
+            <section id="ticket-panel">
+                <div id="items-list"></div>
+                <div id="totals">
+                    <h2>Total: $<span id="total-amount">0</span></h2>
+                    <button class="btn-pay" onclick="procesarPago()">COBRAR (Print)</button>
+                </div>
+            </section>
+            <section id="products-grid"></section>
+            <nav id="categories-sidebar"></nav>
+        </div>
+    </div>
+
+    <div id="ticket-impresion" class="solo-impresion">
+        <center><h2>PANADERÍA POS</h2><p id="p-fecha"></p></center>
+        <hr><div id="p-items"></div><hr>
+        <h3>TOTAL: $<span id="p-total"></span></h3>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
