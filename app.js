@@ -18,17 +18,23 @@ async function verificarConfiguracion() {
 
 async function sincronizar() {
     try {
-        // Añadimos un modo 'cors' implícito al usar Google Apps Script
         const res = await fetch(API_URL, { method: 'GET', redirect: 'follow' });
+        if (!res.ok) throw new Error("Error en la respuesta de Google");
+        
         const data = await res.json();
         
         if (data && data.length > 0) {
             await db.productos.clear();
             await db.productos.bulkAdd(data);
-            console.log("Datos sincronizados con éxito");
+            console.log("✅ Sincronización exitosa");
         }
     } catch(e) { 
-        console.error("Error de sincronización:", e); 
+        console.error("❌ Error de sincronización:", e);
+        // Si hay error de red, preguntamos si desea resetear la URL
+        if (confirm("No se pudo conectar con Google Sheets. ¿Deseas borrar la URL guardada para intentar con una nueva?")) {
+            localStorage.removeItem("url_google_sheets");
+            location.reload();
+        }
     }
 }
 
