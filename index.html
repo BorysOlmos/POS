@@ -31,13 +31,20 @@
     </div>
 
     <script src="app.js"></script>
-    
-<button onclick="localStorage.clear(); sessionStorage.clear(); alert('Memoria limpia. Reiniciando...'); location.reload();" 
-        style="position:fixed; top:0; right:0; z-index:9999; background:red; color:white; padding:10px;">
-    SOLUCIONAR ERROR (BORRAR URL VIEJA)
-</button>
-    
+        
 </body>
-
+    
+    <div style="background: #2c3e50; color: white; padding: 20px; text-align: center; border-bottom: 5px solid #e74c3c;">
+    <h3>⚙️ PANEL DE CONFIGURACIÓN CRÍTICA</h3>
+    <p>Si no ves tus productos, usa el botón de abajo:</p>
+    <button onclick="let n = prompt('Pega aquí la URL de Google Sheets (_o7I/exec):'); if(n){localStorage.setItem('url_google_sheets', n); location.reload();}" 
+            style="background: #27ae60; color: white; padding: 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+        🔗 PEGAR NUEVA URL DE GOOGLE
+    </button>
+    <button onclick="localStorage.clear(); location.reload();" 
+            style="background: #c0392b; color: white; padding: 15px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+        🗑️ BORRAR TODO Y REINICIAR
+    </button>
+    </div>
     
 </html>
