@@ -1,22 +1,17 @@
-let API_URL = localStorage.getItem("url_google_sheets");
+// 1. Configuración de la Base de Datos Local
 const db = new Dexie("PanaderiaDB");
 db.version(1).stores({ productos: 'ID, Categoria', ventas: '++id' });
-let carrito = [];
 
-if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
-
-// 1. Intentamos obtener la URL guardada
+// 2. Variable Global (Solo declarada una vez)
 let API_URL = localStorage.getItem("url_google_sheets");
 
+// 3. Verificación de la URL
 async function verificarConfiguracion() {
-    // Si la URL guardada es la vieja, la borramos sin preguntar
-    if (API_URL && API_URL.includes("C0egYc")) {
+    // Si la URL es la vieja o no existe, limpiar
+    if (!API_URL || API_URL.includes("C0egYc")) {
         localStorage.removeItem("url_google_sheets");
-        API_URL = null;
-    }
-
-    if (!API_URL) {
         let urlPropuesta = prompt("SISTEMA DE RECUPERACIÓN\n\nPor favor, pega la NUEVA URL (la que termina en _o7I/exec):");
+        
         if (urlPropuesta && urlPropuesta.includes("script.google.com")) {
             localStorage.setItem("url_google_sheets", urlPropuesta);
             API_URL = urlPropuesta;
@@ -25,28 +20,22 @@ async function verificarConfiguracion() {
     }
 }
 
+// 4. Sincronización con Google
 async function sincronizar() {
     try {
         const res = await fetch(API_URL, { method: 'GET', redirect: 'follow' });
-        if (!res.ok) throw new Error("Error en la respuesta de Google");
-        
         const data = await res.json();
-        
         if (data && data.length > 0) {
             await db.productos.clear();
             await db.productos.bulkAdd(data);
-            console.log("✅ Sincronización exitosa");
+            console.log("✅ Datos actualizados");
         }
     } catch(e) { 
-        console.error("❌ Error de sincronización:", e);
-        // Si hay error de red, preguntamos si desea resetear la URL
-        if (confirm("No se pudo conectar con Google Sheets. ¿Deseas borrar la URL guardada para intentar con una nueva?")) {
-            localStorage.removeItem("url_google_sheets");
-            location.reload();
-        }
+        console.error("Modo Offline: Usando datos locales"); 
     }
 }
 
+// 5. Carga de la Aplicación
 window.onload = async () => {
     await verificarConfiguracion();
     if (API_URL) {
@@ -57,15 +46,14 @@ window.onload = async () => {
             const cats = [...new Set(prods.map(p => p.Categoria))];
             document.getElementById('categories-sidebar').innerHTML = cats.map(c => 
                 `<button class="btn-cat" onclick="mostrarProductos('${c}')">${c}</button>`).join('');
-            
-            // Solo intentamos mostrar productos si existen categorías
-            if (cats.length > 0) mostrarProductos(cats[0]);
+            mostrarProductos(cats[0]);
         } else {
-            document.getElementById('products-grid').innerHTML = "<h3>No hay productos. Revisa tu Excel y la URL de Google.</h3>";
+            document.getElementById('products-grid').innerHTML = "<h3>No hay productos. Revisa tu Excel.</h3>";
         }
     }
 };
 
+// 6. Funciones de la Interfaz
 async function mostrarProductos(cat) {
     const prods = await db.productos.where('Categoria').equals(cat).toArray();
     document.getElementById('products-grid').innerHTML = prods.map(p => `
@@ -74,6 +62,7 @@ async function mostrarProductos(cat) {
         </div>`).join('');
 }
 
+let carrito = [];
 function add(id, nombre, precio) {
     const item = carrito.find(i => i.id === id);
     item ? item.cantidad++ : carrito.push({id, nombre, precio, cantidad:1});
@@ -91,10 +80,7 @@ function dibujarTicket() {
 
 async function procesarPago() {
     if (carrito.length === 0) return;
-    const venta = { id_venta: Date.now(), items: carrito, total: document.getElementById('total-amount').innerText, usuario: "Admin" };
-    document.getElementById('p-fecha').innerText = new Date().toLocaleString();
-    document.getElementById('p-total').innerText = venta.total;
-    document.getElementById('p-items').innerHTML = document.getElementById('items-list').innerHTML;
+    const venta = { id_venta: Date.now(), items: carrito, total: document.getElementById('total-amount').innerText };
     window.print();
     if (navigator.onLine) fetch(API_URL, { method: 'POST', body: JSON.stringify(venta) });
     carrito = []; dibujarTicket();
